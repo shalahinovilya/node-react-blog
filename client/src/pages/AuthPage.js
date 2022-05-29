@@ -35,7 +35,7 @@ export const AuthPage = () => {
                 <h1>Blog</h1>
                 <div className="card blue darken-1">
                     <div className="card-content white-text">
-                        <span className="card-title">Card Title</span>
+                        <span className="card-title">Вход</span>
                         <div>
 
                             <div className="input-field">

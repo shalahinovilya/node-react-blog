@@ -1,4 +1,3 @@
-import mongoose from "mongoose";
 import Post from "../models/Post.js";
 import fileService from "./fileService.js";
 import fs from 'fs-extra'
@@ -8,12 +7,12 @@ class PostService {
     async createPost (post, picture) {
 
         const fileName = fileService.saveFile(picture)
-        const {title, description, id} = post
+        const {title, author, description} = post
 
         const createdPost = await Post.create({
             'title': title,
             'description': description,
-            'author': id,
+            'author': author,
             'img': fileName})
 
         return createdPost
@@ -43,10 +42,8 @@ class PostService {
             throw new Error('Не указан id')
         }
 
-
-
         const deletedPost = await Post.findByIdAndRemove(postId)
-        fs.remove(`/../js projects/nodeReactBlog/client/src/static/${deletedPost.img}`, (err) => {
+        await fs.remove(`/../js projects/nodeReactBlog/client/src/static/${deletedPost.img}`, (err) => {
             if (err) {
                 console.log(err)
             }
@@ -55,13 +52,34 @@ class PostService {
 
     }
 
-    async updatePost(newPost) {
+    async updatePost(newPostData, postId, picture) {
 
-        if (!newPost.id) {
+        if (!postId) {
             throw new Error('Не указан id')
         }
 
-        const updatedPost = await Post.findByIdAndUpdate(newPost.id, newPost, {new: true})
+        const user = await Post.findOne({_id: postId})
+
+        if (!user) {
+            throw new Error('Нет поста с таким id')
+        }
+
+        await fs.remove(`/../js projects/nodeReactBlog/client/src/static/${user.img}`, (err) => {
+            if (err) {
+                console.log(err)
+            }
+        })
+
+        const fileName = fileService.saveFile(picture)
+
+        const newPost = {
+            title: newPostData.title,
+            description: newPostData.description,
+            author: newPostData.author,
+            img: fileName
+        }
+        const updatedPost = await Post.findByIdAndUpdate(postId, newPost, {new: true})
+
         return updatedPost
 
     }

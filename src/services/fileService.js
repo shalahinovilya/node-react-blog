@@ -4,6 +4,7 @@ import * as path from 'path';
 class fileService {
 
     saveFile(file) {
+
         try {
 
             const fileName = uuid.v4() + '.jpg'

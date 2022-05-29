@@ -1,9 +1,7 @@
 import React from 'react';
 import {Link, NavLink} from "react-router-dom";
-import {Image} from "react-bootstrap";
 import {useContext} from "react";
 import {AuthContext} from "../context/AuthContext";
-import Axios from "axios";
 import {useHttp} from "../hooks/http.hook";
 
 const PostCard = ({post}) => {
@@ -19,14 +17,6 @@ const PostCard = ({post}) => {
                 'DELETE',
                 null
             )
-            // const formData = new FormData()
-            // formData.append('img', post.img)
-            // formData.append('title', post.title)
-            // formData.append('description', post.description)
-            // formData.append('postId', post._id)
-            // formData.append('token', token)
-            // formData.append('userId', userId)
-            //
 
         } catch (e) {
             console.log(e)

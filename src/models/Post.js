@@ -18,7 +18,8 @@ const Post = new Schema ({
     },
     img: {
             data: Buffer,
-            type: String
+            type: String,
+            required: true
         },
     create_at: {
         type: Date, default: Date.now

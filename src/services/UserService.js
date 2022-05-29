@@ -1,18 +1,7 @@
-import mongoose from "mongoose";
 import User from "../models/User.js";
 import Post from "../models/Post.js";
-import {validationResult, body} from "express-validator";
-import bcrypt, {hashSync} from "bcrypt";
-import {has} from "mobx";
 
 class userService {
-
-    async createUser(user) {
-
-        const createdUser = await User.create(user)
-        return createdUser
-
-    }
 
     async showUser(useId) {
 
@@ -20,8 +9,8 @@ class userService {
             throw new Error('Не указан id')
         }
 
-        const findUser = await User.findById(useId)
-        return findUser
+        const {username, email} = await User.findById(useId)
+        return {username, email}
 
     }
 

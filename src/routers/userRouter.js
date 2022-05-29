@@ -1,4 +1,5 @@
 import Router from 'express'
+import 'dotenv/config'
 import userController from "../controllers/UserController.js";
 import {validationResult,  check} from "express-validator";
 import User from "../models/User.js";
@@ -7,9 +8,8 @@ import jwt from "jsonwebtoken";
 const userRouters = new Router()
 
 
-userRouters.get('/users/:id/show-user', userController.showUser)
-userRouters.get('/users/user-posts', userController.getUserPosts)
-// userRouters.post('/users', userController.createUser)
+userRouters.get('/users/show-user/:id', userController.showUser)
+userRouters.get('/users/user-posts/:id', userController.getUserPosts)
 userRouters.post('/users/auth/login', [
     check('email', 'Неккоректный email').isEmail(),
     check('password', 'Пароль должен быть не менее 6 символов').exists(),
@@ -40,14 +40,14 @@ userRouters.post('/users/auth/login', [
 
             const token = jwt.sign(
                 {userId: user._id},
-                        process.env.jwtSecret,
+                process.env.jwtSecret,
                 {expiresIn: '1h'})
 
-            res.json({'token': token, 'userId': user._id})
+            res.status(200).json({'token': token, 'userId': user._id})
 
 
         } catch (e) {
-            return res.status(500).json({
+            res.status(400).json({
                 error: e,
                 message:'Что-то пошло не так, попробуйте снова'
             })
@@ -64,11 +64,13 @@ userRouters.post('/users/auth/register', [
         try {
 
             const errors = validationResult(req)
+
             if (!errors.isEmpty()) {
                 return res.status(400).json({errors: errors.array, message: 'Ошибка в запросе'})
             }
 
             const {email, password, username} = req.body
+
             const userEmail = await User.findOne({'email': email})
 
             if (userEmail) {
@@ -79,9 +81,10 @@ userRouters.post('/users/auth/register', [
 
             const newUser = await User.create({'email': email, 'password': hashedPassword, 'username': username})
 
-            return res.json({email, password, username})
+            res.status(200).json({email, password, username})
+
         } catch (e) {
-            return res.status(500).json({e: e, m:'Что-то пошло не так, попробуйте снова'})
+            return res.status(400).json({e: e, m:'Что-то пошло не так, попробуйте снова'})
         }
 
 })

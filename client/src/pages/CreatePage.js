@@ -1,5 +1,4 @@
 import React, {useContext, useState} from 'react';
-import {useHttp} from "../hooks/http.hook";
 
 import {AuthContext} from "../context/AuthContext";
 import Axios from "axios";
@@ -19,7 +18,7 @@ const CreatePage = () => {
         formData.append('token', auth.token)
         formData.append('id', auth.userId)
 
-        await Axios.post('http://localhost:5000/app/posts/create', formData)
+        await Axios.post('/app/posts/create-post', formData)
             .catch((e) => {console.log(e)})
 
     }

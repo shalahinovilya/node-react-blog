@@ -1,4 +1,3 @@
-import Post from "../models/Post.js";
 import postService from "../services/PostService.js";
 
 class postController {
@@ -6,9 +5,9 @@ class postController {
     async createPost(req, res) {
 
         try {
-
+            console.log(req.body, req.files)
             const post = await postService.createPost(req.body, req.files.img)
-            res.json(post)
+            res.status(200).json(post)
 
         } catch (e) {
             res.status(500).json(e.message)
@@ -18,12 +17,10 @@ class postController {
     }
 
     async getPost(req, res) {
-        console.log(req.params)
 
         try {
             const post = await postService.getPost(req.params.id)
             res.json(post)
-            console.log(post)
 
         } catch (e) {
             res.status(500).json(e.message)
@@ -56,13 +53,17 @@ class postController {
     }
 
     async updatePost(req, res) {
-
+        let img
         try {
-            const updatedPost = await postService.updatePost(req.body)
+            if (req.files.img) {
+                img = req.files.img
+            }
+
+            const updatedPost = await postService.updatePost(req.body, req.params.id, img)
             res.json(updatedPost)
 
         } catch (e) {
-            res.status(500).json(e.message)
+            res.status(400).json(e.message)
         }
 
     }

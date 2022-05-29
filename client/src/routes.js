@@ -11,8 +11,6 @@ export const useRoutes = isAuth => {
 
             <Routes>
 
-                {/*<Route path="links" />*/}
-
                 <Route
                     path="create"
                     element={<CreatePage />} />
