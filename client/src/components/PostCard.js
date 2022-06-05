@@ -6,14 +6,13 @@ import {useHttp} from "../hooks/http.hook";
 
 const PostCard = ({post}) => {
 
-    const {userId, token} = useContext(AuthContext)
-    const {request, loading} = useHttp()
-
+    const {userId} = useContext(AuthContext)
+    const {request} = useHttp()
     const deletePost = async () => {
         try {
 
-            const delRequest = request(
-                `app/posts/delete-post/${post._id}`,
+            await request(
+                `/app/posts/delete-post/${post._id}`,
                 'DELETE',
                 null
             )
@@ -38,11 +37,26 @@ const PostCard = ({post}) => {
 
                         <Link key={post._id} to={`/detail/${post._id}`} className="material-icons left">This is a link</Link>
 
-                        {userId && post.author && userId === post.author && <NavLink to='posts'
-                                                                                     className="waves-effect waves-light red btn material-icons right"
-                                                                                     onClick={deletePost}> delete
-                            post </NavLink>
+                        {
+                            userId &&
+                            post.author &&
+                            userId === post.author && <NavLink to='posts'
+                                                               className="waves-effect waves-light red btn material-icons right"
+                                                               onClick={deletePost}> delete post </NavLink>
                         }
+
+                        {
+                            userId &&
+                            post.author &&
+                            userId === post.author && <Link
+                                key={post._id}
+                                state = {post}
+                                to={{
+                                    pathname: `/update/${post._id}`,
+                            }}
+                                className="waves-effect waves-light green btn material-icons right">update post</Link>
+                        }
+
                     </div>
                 </div>
             </div>

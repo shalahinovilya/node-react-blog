@@ -2,23 +2,21 @@ import request from "supertest";
 import app from "../../index.js"
 import Post from "../../src/models/Post.js";
 import path from "path";
+import 'dotenv/config'
 import {dbConnect, dbDisconnect} from '../config/database.js'
 import {validateResponse} from '../utils/postValidators.utils.js'
 import {remove} from "fs-extra";
+import {postData} from "../config/default.js";
+
 
 const agent = request.agent(app);
-
-const postData = {
-    title: 'Test post title',
-    description: 'Test post description',
-    author: "626e4f1b6979613964a67825",
-    img: path.resolve('test', 'testStatic', 'test-img.jpg')
-}
-
 const staticPath = path.resolve('client', 'src', 'static')
+postData.img = path.resolve('test', 'testStatic', 'test-img.jpg')
+
 
 beforeAll(async () => {
     await dbConnect()
+
 })
 
 afterAll(async () => {
@@ -29,6 +27,7 @@ describe('Post Controller', () => {
 
     test('App works', async () => {
         await agent
+            .set({testOpt: 'secretTESTINGoption'})
             .get('/check')
             .expect(200)
             .then(async response => {
@@ -39,7 +38,7 @@ describe('Post Controller', () => {
     test('/app/posts/create-post', async () => {
 
         await agent
-
+            .set({testOpt: 'secretTESTINGoption'})
             .post('/app/posts/create-post')
             .field("title", postData.title)
             .field("description", postData.description)
@@ -68,6 +67,7 @@ describe('Post Controller', () => {
     test('/app/posts/delete-post/:id', async () => {
 
         const createdPost = await agent
+                .set({testOpt: process.env.testHeader})
                 .post('/app/posts/create-post')
                 .field("title", postData.title)
                 .field("description", postData.description)
@@ -75,6 +75,7 @@ describe('Post Controller', () => {
                 .attach('img', postData.img)
 
         await agent
+            .set({testOpt: process.env.testHeader})
             .delete(`/app/posts/delete-post/${createdPost.body._id}`)
             .expect(200)
             .then( async (response) => {
@@ -92,6 +93,7 @@ describe('Post Controller', () => {
 
 
         const createdPost = await agent
+            .set({testOpt: process.env.testHeader})
             .post('/app/posts/create-post')
             .field("title", postData.title)
             .field("description", postData.description)
@@ -108,6 +110,7 @@ describe('Post Controller', () => {
         const newFilePath = path.resolve('test', 'testStatic', newPostData.img)
 
         await agent
+            .set({testOpt: process.env.testHeader})
             .put(`/app/posts/update-post/${createdPost.body._id}`)
             .field("title", newPostData.title)
             .field("description", newPostData.description)
@@ -136,6 +139,7 @@ describe('Post Controller', () => {
     test('/app/posts/get-post/:id',async () => {
 
         const createdPost = await agent
+            .set({testOpt: process.env.testHeader})
             .post('/app/posts/create-post')
             .field("title", postData.title)
             .field("description", postData.description)
@@ -143,6 +147,7 @@ describe('Post Controller', () => {
             .attach('img', postData.img)
 
         await agent
+            .set({testOpt: process.env.testHeader})
             .get(`/app/posts/get-post/${createdPost.body._id}`)
             .expect(200)
             .then(async response => {
@@ -156,6 +161,7 @@ describe('Post Controller', () => {
 
     test('/app/posts/get-all-posts', async () => {
         await agent
+            .set({testOpt: 'secretTESTINGoption'})
             .get('/app/posts/get-all-posts')
             .expect(200)
             .then(async response => {

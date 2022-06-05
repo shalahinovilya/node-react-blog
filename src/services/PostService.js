@@ -1,6 +1,9 @@
 import Post from "../models/Post.js";
 import fileService from "./fileService.js";
 import fs from 'fs-extra'
+import path from "path";
+
+const staticPath = path.resolve() + '/client/src/static/'
 
 class PostService {
 
@@ -43,7 +46,7 @@ class PostService {
         }
 
         const deletedPost = await Post.findByIdAndRemove(postId)
-        await fs.remove(`/../js projects/nodeReactBlog/client/src/static/${deletedPost.img}`, (err) => {
+        await fs.remove(`${staticPath}${deletedPost.img}`, (err) => {
             if (err) {
                 console.log(err)
             }
@@ -52,7 +55,9 @@ class PostService {
 
     }
 
-    async updatePost(newPostData, postId, picture) {
+    async updatePost(newPostData, postId, img) {
+
+        let fileName
 
         if (!postId) {
             throw new Error('Не указан id')
@@ -64,19 +69,30 @@ class PostService {
             throw new Error('Нет поста с таким id')
         }
 
-        await fs.remove(`/../js projects/nodeReactBlog/client/src/static/${user.img}`, (err) => {
-            if (err) {
-                console.log(err)
-            }
-        })
+        if (typeof img === 'object') {
 
-        const fileName = fileService.saveFile(picture)
+            fileName = fileService.saveFile(img)
+
+            await fs.remove(`${staticPath}${user.img}`, (err) => {
+                if (err) {
+                    console.log(err)
+                }
+            })
+        }
+        else if (typeof img === 'string') {
+            const checkImg = await fs.pathExists(`${staticPath}${newPostData.img}`)
+                .catch((e) => {
+                    console.log(e)
+                })
+
+            if (!checkImg) throw new Error('Ошибка при загрузке изображение, попробуйте снова')
+        }
 
         const newPost = {
             title: newPostData.title,
             description: newPostData.description,
             author: newPostData.author,
-            img: fileName
+            img: fileName || img
         }
         const updatedPost = await Post.findByIdAndUpdate(postId, newPost, {new: true})
 

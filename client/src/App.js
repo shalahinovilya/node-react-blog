@@ -16,7 +16,7 @@ function App() {
     if (!ready) {
         return <Loader/>
     }
-    console.log(isAuth)
+
     return (
         <AuthContext.Provider value={{
             token, userId, login, logout, isAuth

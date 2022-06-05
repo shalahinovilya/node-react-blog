@@ -4,6 +4,7 @@ import {AuthPage} from "./pages/AuthPage";
 import DetailPage from "./pages/DetailPage";
 import CreatePage from "./pages/CreatePage";
 import PostsPage from "./pages/PostsPage";
+import UpdatePage from "./pages/UpdatePage";
 
 export const useRoutes = isAuth => {
     if (isAuth) {
@@ -16,6 +17,10 @@ export const useRoutes = isAuth => {
                     element={<CreatePage />} />
 
                 <Route
+                    path="update/:id/"
+                    element={<UpdatePage />} />
+
+                <Route
                     path="posts"
                     element={<PostsPage />} />
 
@@ -25,7 +30,7 @@ export const useRoutes = isAuth => {
 
                 <Route
                     path='*'
-                    element={<Navigate to="create" element={<CreatePage />}  />} />
+                    element={<Navigate to="posts" element={<CreatePage />}  />} />
 
             </Routes>
 

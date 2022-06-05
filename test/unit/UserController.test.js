@@ -3,14 +3,9 @@ import app from "../../index.js"
 import User from "../../src/models/User.js";
 import {dbConnect, dbDisconnect, dropCollections} from '../config/database.js'
 import bcrypt from "bcrypt";
+import {authData} from "../config/default.js";
 
 const agent = request.agent(app);
-
-const authData = {
-    email: 'test@gmail.com',
-    password: 'testpassword',
-    username: 'test password'
-}
 
 beforeAll(async () => {
     await dbConnect()

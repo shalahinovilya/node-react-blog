@@ -1,44 +1,50 @@
 import React, {useContext, useEffect, useState} from 'react';
+import {useLocation, useNavigate} from "react-router-dom";
 import {AuthContext} from "../context/AuthContext";
 import {useHttp} from "../hooks/http.hook";
-import {useNavigate} from "react-router-dom";
 
 
-const CreatePage = () => {
+const UpdatePage = () => {
+
     const navigate = useNavigate();
-    const [form, setForm] = useState({title: '', description: '', picture: ''})
-    const {request} = useHttp()
     const auth = useContext(AuthContext)
+    const {request} = useHttp()
+    const location = useLocation();
+    console.log(location.state)
+    const {_id, title, description, img} = location.state
+    const [newForm, setNewForm] = useState({'title': title, 'description': description, 'img': img})
 
     useEffect(() => {
         window.M.updateTextFields()
     }, [])
 
-    const sendData = async () => {
-
-        const formData = new FormData()
-        formData.append('img', form.img)
-        formData.append('title', form.title)
-        formData.append('description', form.description)
-        formData.append('author', auth.userId)
-
-
-        try {
-            const data = await request('/app/posts/create-post',  'POST', formData, {})
-            navigate(`/detail/${data._id}/`)
-        } catch (e) {
-            console.log(e)
-        }
-
-    }
-
-    const changeHandler = event => {
-        setForm({...form, [event.target.name]: event.target.value})
+    const changeHandler = (event) => {
+        setNewForm({...newForm, [event.target.name]: [event.target.value]})
     }
 
     const changePic = event => {
-        setForm({...form, [event.target.name]: event.target.files[0]})
+        setNewForm({...newForm, [event.target.name]: event.target.files[0]})
     }
+
+    const sendUpdatedData = async () => {
+
+        try {
+            const formData = new FormData()
+            formData.append('img', newForm.img)
+            formData.append('title', newForm.title)
+            formData.append('description', newForm.description)
+            formData.append('author', auth.userId)
+
+            const data = await request(`/app/posts/update-post/${_id}`,  'PUT', formData, {})
+            navigate(`/detail/${data._id}/`)
+
+        } catch (e) {
+
+        }
+
+
+    }
+
 
     return (
         <div className="row">
@@ -50,9 +56,10 @@ const CreatePage = () => {
                         name="title"
                         type="text"
                         className="validate"
+                        value={newForm.title}
                         onChange={changeHandler}
                     />
-                        <label htmlFor="title">Title</label>
+                    <label htmlFor="title">Title</label>
                 </div>
 
                 <div className="input-field col s12">
@@ -60,9 +67,10 @@ const CreatePage = () => {
                            name="description"
                            type="text"
                            className="validate"
+                           value={newForm.description}
                            onChange={changeHandler}
                     />
-                        <label htmlFor="description">Description</label>
+                    <label htmlFor="description">Description</label>
                 </div>
 
                 <div className="file-field input-field col s12" >
@@ -75,16 +83,16 @@ const CreatePage = () => {
                             onChange={changePic}
                         />
                     </div>
-                    <div className="file-path-wrapper">
-                        <input className="file-path validate" type="text"/>
-                    </div>
+                        <div className="file-path-wrapper">
+                            <input value={img} className="file-path validate" type="text" placeholder="Choose an image"/>
+                        </div>
                 </div>
 
 
                 <div className="input-field col s12">
                     <button className="btn waves-effect waves-light"
-                            onClick={sendData}
-                            name="action">Create Post
+                            onClick={sendUpdatedData}
+                            name="action">Update Post
                     </button>
                 </div>
 
@@ -93,4 +101,4 @@ const CreatePage = () => {
     );
 };
 
-export default CreatePage;
+export default UpdatePage;

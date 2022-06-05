@@ -5,7 +5,6 @@ class postController {
     async createPost(req, res) {
 
         try {
-            console.log(req.body, req.files)
             const post = await postService.createPost(req.body, req.files.img)
             res.status(200).json(post)
 
@@ -55,15 +54,13 @@ class postController {
     async updatePost(req, res) {
         let img
         try {
-            if (req.files.img) {
-                img = req.files.img
-            }
 
+            img = req.files ? req.files.img : req.body.img
             const updatedPost = await postService.updatePost(req.body, req.params.id, img)
             res.json(updatedPost)
 
         } catch (e) {
-            res.status(400).json(e.message)
+            res.status(500).json(e.message)
         }
 
     }

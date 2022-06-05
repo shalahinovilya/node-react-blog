@@ -1,11 +1,16 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {useHttp} from "../hooks/http.hook";
 import {AuthContext} from "../context/AuthContext";
 
 export const AuthPage = () => {
     const auth = useContext(AuthContext)
-    const {loading, request, error, clearError} =  useHttp()
+    const {loading, request} =  useHttp()
     const [form, setForm] = useState({email: '', password: '', username: ''})
+
+
+    useEffect(() => {
+        window.M.updateTextFields()
+    }, [])
 
     const changeHandler = event => {
         setForm({...form, [event.target.name]: event.target.value})
@@ -45,11 +50,11 @@ export const AuthPage = () => {
                                     type="text"
                                     name="email"
                                     value={form.email}
-                                    className="validate"
+                                    className="yellow-input"
                                     onChange={changeHandler}
                                 />
 
-                                {/*<label htmlFor="Email">First Name</label>*/}
+                                <label htmlFor="Email">Email</label>
                             </div>
 
                             <div className="input-field">
@@ -59,10 +64,10 @@ export const AuthPage = () => {
                                     type="password"
                                     name="password"
                                     value={form.password}
-                                    className="validate"
+                                    className="yellow-input"
                                     onChange={changeHandler}
                                 />
-                                    {/*<label htmlFor="Пароль">Last Name</label>*/}
+                                    <label htmlFor="Пароль">Password</label>
                             </div>
 
                             <div className="input-field">
@@ -72,10 +77,10 @@ export const AuthPage = () => {
                                     type="text"
                                     name="username"
                                     value={form.username}
-                                    className="validate"
+                                    className="yellow-input"
                                     onChange={changeHandler}
                                 />
-                                {/*<label htmlFor="Пароль">Last Name</label>*/}
+                                <label htmlFor="Пароль">Username</label>
                             </div>
 
 

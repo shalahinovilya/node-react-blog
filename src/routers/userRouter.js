@@ -5,6 +5,8 @@ import {validationResult,  check} from "express-validator";
 import User from "../models/User.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+
+
 const userRouters = new Router()
 
 
@@ -42,6 +44,7 @@ userRouters.post('/users/auth/login', [
                 {userId: user._id},
                 process.env.jwtSecret,
                 {expiresIn: '1h'})
+
 
             res.status(200).json({'token': token, 'userId': user._id})
 
@@ -84,7 +87,7 @@ userRouters.post('/users/auth/register', [
             res.status(200).json({email, password, username})
 
         } catch (e) {
-            return res.status(400).json({e: e, m:'Что-то пошло не так, попробуйте снова'})
+            return res.status(500).json({e: e, m:'Что-то пошло не так, попробуйте снова'})
         }
 
 })

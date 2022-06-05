@@ -22,10 +22,5 @@ const User = new Schema ({
 
 })
 
-// User.virtual("posts", {
-//     ref: "Post",
-//     foreignField: "author",
-//     localField: "_id"
-// });
 
 export default mongoose.model('User', User)

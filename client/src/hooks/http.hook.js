@@ -1,8 +1,11 @@
-import {useCallback, useState} from "react";
+import {useCallback, useContext, useState} from "react";
+import axios from "axios";
+import {AuthContext} from "../context/AuthContext";
 
 export const useHttp = () => {
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState(false)
+    const auth = useContext(AuthContext)
 
     const request = useCallback(async (url, method='GET', body=null, headers={}) => {
 
@@ -10,24 +13,20 @@ export const useHttp = () => {
 
         try {
 
-            if (body) {
-                body = JSON.stringify(body)
-                headers['Content-Type'] = 'application/json'
+            const response = await axios({
+                'method': method,
+                'url': url,
+                'data': body,
+                'headers': {
+                    'Authorization': `Bearer ${auth.token}`
+                }
+            })
+                .catch((error) => {
+                    throw new Error(error.message || 'Something wrong with request')
+                })
 
-            }
+            const data = response.data
 
-
-            const response = await fetch(url, {
-                method,
-                body,
-                headers
-            });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.message || 'Something wrong with request')
-            }
             setLoading(false)
 
             return data
